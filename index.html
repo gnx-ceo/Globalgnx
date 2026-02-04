@@ -9,54 +9,52 @@
     html, body {
       margin: 0;
       padding: 0;
+      width: 100%;
       height: 100%;
       background: #000;
-      color: #0f0;
+      color: #00ff00;
       font-family: -apple-system, BlinkMacSystemFont, monospace;
     }
 
-    .container {
+    .root {
       height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      text-align: center;
+      gap: 16px;
+    }
+
+    h1 {
+      margin-bottom: 24px;
+      font-size: 32px;
+      letter-spacing: 1px;
     }
 
     button {
+      width: 220px;
+      padding: 14px;
       background: transparent;
-      border: 1px solid #0f0;
-      color: #0f0;
-      padding: 10px 20px;
-      margin: 6px;
+      border: 1px solid #00ff00;
+      color: #00ff00;
       font-size: 14px;
       cursor: pointer;
     }
 
     button:hover {
-      background: #0f0;
+      background: #00ff00;
       color: #000;
     }
 
-    #root-panel {
-      display: none;
-      margin-top: 30px;
-      border-top: 1px solid #0f0;
-      padding-top: 20px;
+    #status {
+      margin-top: 24px;
+      font-size: 13px;
+      opacity: 0.8;
     }
 
-    input {
-      background: #000;
-      border: 1px solid #0f0;
-      color: #0f0;
-      padding: 8px;
-      width: 220px;
-    }
-
-    .footer {
+    footer {
       position: absolute;
-      bottom: 10px;
+      bottom: 20px;
       font-size: 12px;
       opacity: 0.6;
     }
@@ -64,58 +62,36 @@
 </head>
 
 <body>
-  <div class="container">
-
+  <div class="root">
     <h1>Globalgnx</h1>
 
-    <!-- Public Lobby -->
-    <button id="start-call">Start Secure Call</button>
-    <button id="acquire-ain">Acquire AIN</button>
-    <button id="my-identity">My Identity</button>
+    <button id="call">Start Secure Call</button>
+    <button id="ain">Acquire AIN</button>
+    <button id="me">My Identity</button>
+    <button id="root">Root Access</button>
 
-    <!-- Root Access -->
-    <button id="root-access" style="margin-top:20px; opacity:0.5;">
-      Root Access
-    </button>
-
-    <!-- Root Panel -->
-    <div id="root-panel">
-      <h2>GNX Root Console</h2>
-
-      <input id="ain-name" placeholder="Enter new AIN name" />
-      <br/><br/>
-      <button id="create-ain">Create AIN</button>
-
-      <p id="root-message"></p>
-    </div>
-
-    <div class="footer">
-      GNX Network · AIPhone Engine
-    </div>
+    <div id="status">GNX AIPhone Engine: idle</div>
   </div>
 
-  <script>
-    const rootBtn = document.getElementById("root-access");
-    const rootPanel = document.getElementById("root-panel");
-    const createBtn = document.getElementById("create-ain");
-    const msg = document.getElementById("root-message");
+  <footer>GNX Network · AIPhone Engine</footer>
 
-    rootBtn.onclick = () => {
-      rootPanel.style.display = "block";
-      rootBtn.style.display = "none";
+  <script>
+    const status = document.getElementById("status");
+
+    document.getElementById("call").onclick = () => {
+      status.innerText = "Secure Call module: not connected";
     };
 
-    createBtn.onclick = () => {
-      const name = document.getElementById("ain-name").value.trim();
+    document.getElementById("ain").onclick = () => {
+      status.innerText = "AIN Registry: awaiting issuance";
+    };
 
-      if (!name) {
-        msg.innerText = "AIN name required.";
-        msg.style.color = "red";
-        return;
-      }
+    document.getElementById("me").onclick = () => {
+      status.innerText = "Identity Core: no active profile";
+    };
 
-      msg.innerText = `AIN "${name}" created (mock).`;
-      msg.style.color = "#0f0";
+    document.getElementById("root").onclick = () => {
+      status.innerText = "Root Console: permission denied (local only)";
     };
   </script>
 </body>
