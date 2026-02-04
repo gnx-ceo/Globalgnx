@@ -90,9 +90,103 @@
 
 <script>
 /**
- * GNX AIPhone – Single State Machine
- * 절대 중복 상태 없음
+ * GNX AIPhone – Secure Call Session Engine (Mock)
+ * STEP 4
  */
+
+const stateText = document.getElementById("stateText");
+
+const secureBtn = document.getElementById("secureCall");
+const ainBtn = document.getElementById("ain");
+const idBtn = document.getElementById("identity");
+const rootBtn = document.getElementById("root");
+
+let session = {
+    secure: false,
+    sessionId: null,
+    ain: false,
+    identity: false,
+    root: false
+};
+
+function resetButtons() {
+    [secureBtn, ainBtn, idBtn, rootBtn].forEach(b =>
+        b.classList.remove("active")
+    );
+}
+
+function generateSessionId() {
+    return "GNX-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+}
+
+/* STEP 4 — Secure Call */
+secureBtn.onclick = () => {
+    resetButtons();
+    secureBtn.classList.add("active");
+
+    stateText.innerText = "STATE: SECURE_CALL → initializing secure channel…";
+
+    setTimeout(() => {
+        session.secure = true;
+        session.sessionId = generateSessionId();
+
+        stateText.innerText =
+            "STATE: SECURE_CHANNEL_ESTABLISHED\n" +
+            "SESSION ID: " + session.sessionId;
+
+        ainBtn.disabled = false;
+    }, 1200);
+};
+
+/* STEP 5 — AIN */
+ainBtn.onclick = () => {
+    resetButtons();
+    ainBtn.classList.add("active");
+
+    stateText.innerText =
+        "STATE: AIN_REQUEST → issuing AIN for session " + session.sessionId;
+
+    setTimeout(() => {
+        session.ain = true;
+        stateText.innerText =
+            "STATE: AIN_BOUND → linked to " + session.sessionId;
+
+        idBtn.disabled = false;
+    }, 1000);
+};
+
+/* STEP 6 — Identity */
+idBtn.onclick = () => {
+    resetButtons();
+    idBtn.classList.add("active");
+
+    stateText.innerText =
+        "STATE: IDENTITY_VERIFY → validating credentials…";
+
+    setTimeout(() => {
+        session.identity = true;
+        stateText.innerText =
+            "STATE: IDENTITY_BOUND → verified";
+
+        rootBtn.disabled = false;
+    }, 900);
+};
+
+/* STEP 7 — Root */
+rootBtn.onclick = () => {
+    resetButtons();
+    rootBtn.classList.add("active");
+
+    stateText.innerText =
+        "STATE: ROOT_REQUEST → privilege escalation…";
+
+    setTimeout(() => {
+        session.root = true;
+        stateText.innerText =
+            "STATE: ROOT_GRANTED → system-level access";
+    }, 800);
+};
+</script>
 
 const stateText = document.getElementById("stateText");
 
