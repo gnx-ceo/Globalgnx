@@ -74,34 +74,70 @@
   <footer>GNX Network · AIPhone Engine</footer>
 
   <script>
-    const status = document.getElementById("status");
+    <script>
+/* =========================
+   GNX AIN ENGINE (STEP 3)
+========================= */
 
-    const engine = {
-      state: "idle",
+// Engine State
+const Engine = {
+  state: "idle", // idle | awaiting_ain | ain_issued
+  registry: {},  // AIN Registry
+  currentAIN: null
+};
 
-      setState(next, message) {
-        this.state = next;
-        status.innerText = `STATE: ${this.state} → ${message}`;
-      },
+// Elements
+const statusText = document.getElementById("status");
+const acquireBtn = document.getElementById("acquireBtn");
 
-      secureCall() {
-        this.setState("SECURE_CALL", "Channel not yet bound");
-      },
+// Utils
+function updateStatus(text) {
+  statusText.innerText = text;
+}
 
-      acquireAIN() {
-        this.setState("AIN_REQUEST", "AIN issuance pending");
-      },
+// AIN Validation
+function isValidAIN(name) {
+  return /^[a-zA-Z0-9_-]{3,32}$/.test(name);
+}
 
-      identity() {
-        this.setState("IDENTITY", "No identity loaded");
-      },
+// Acquire AIN
+acquireBtn.onclick = () => {
+  if (Engine.state !== "idle") {
+    updateStatus("Engine busy. Current state: " + Engine.state);
+    return;
+  }
 
-      root() {
-        this.setState("ROOT", "Root access locked (local)");
-      }
-    };
+  const name = prompt("Enter AIN name (3–32 chars, alphanumeric):");
+  if (!name) {
+    updateStatus("AIN creation cancelled.");
+    return;
+  }
 
-    engine.setState("idle", "Engine initialized");
+  if (!isValidAIN(name)) {
+    updateStatus("Invalid AIN format.");
+    return;
+  }
+
+  if (Engine.registry[name]) {
+    updateStatus("AIN already exists.");
+    return;
+  }
+
+  // Create AIN
+  Engine.registry[name] = {
+    name,
+    createdAt: new Date().toISOString(),
+    owner: "local-root",
+    status: "active"
+  };
+
+  Engine.currentAIN = name;
+  Engine.state = "ain_issued";
+
+  updateStatus(`AIN '${name}' successfully issued.`);
+  console.log("AIN Registry:", Engine.registry);
+};
+</script>STEP 3 – AIN Create Engine
   </script>
 </body>
 </html>
