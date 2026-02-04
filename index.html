@@ -2,142 +2,123 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>GNX AIPhone</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <title>Globalgnx</title>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
+      background: black;
       color: #00ff00;
-      font-family: -apple-system, BlinkMacSystemFont, monospace;
-    }
-
-    .root {
-      height: 100%;
+      font-family: monospace;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 16px;
+      height: 100vh;
     }
 
     h1 {
-      margin-bottom: 24px;
-      font-size: 32px;
+      margin-bottom: 30px;
     }
 
     button {
-      width: 220px;
+      width: 260px;
       padding: 14px;
+      margin: 10px 0;
       background: transparent;
-      border: 1px solid #00ff00;
+      border: 2px solid #00ff00;
       color: #00ff00;
       cursor: pointer;
+      font-size: 16px;
     }
 
-    button:hover {
+    button.active {
       background: #00ff00;
-      color: #000;
+      color: black;
     }
 
     #status {
-      margin-top: 24px;
-      font-size: 13px;
-      opacity: 0.85;
+      margin-top: 30px;
+      font-size: 14px;
+      min-height: 20px;
     }
 
     footer {
       position: absolute;
-      bottom: 20px;
+      bottom: 10px;
       font-size: 12px;
-      opacity: 0.6;
+      opacity: 0.7;
     }
   </style>
 </head>
-
 <body>
-  <div class="root">
-    <h1>Globalgnx</h1>
 
-    <button onclick="engine.secureCall()">Start Secure Call</button>
-    <button onclick="engine.acquireAIN()">Acquire AIN</button>
-    <button onclick="engine.identity()">My Identity</button>
-    <button onclick="engine.root()">Root Access</button>
+  <h1>Globalgnx</h1>
 
-    <div id="status"></div>
-  </div>
+  <button id="secureBtn">Start Secure Call</button>
+  <button id="ainBtn">Acquire AIN</button>
+  <button id="idBtn">My Identity</button>
+  <button id="rootBtn">Root Access</button>
+
+  <div id="status">GNX AIPhone Engine: idle</div>
 
   <footer>GNX Network · AIPhone Engine</footer>
 
   <script>
-    <script>
-/* =========================
-   GNX AIN ENGINE (STEP 3)
-========================= */
+    let STATE = "IDLE";
 
-// Engine State
-const Engine = {
-  state: "idle", // idle | awaiting_ain | ain_issued
-  registry: {},  // AIN Registry
-  currentAIN: null
-};
+    const secureBtn = document.getElementById("secureBtn");
+    const ainBtn = document.getElementById("ainBtn");
+    const idBtn = document.getElementById("idBtn");
+    const rootBtn = document.getElementById("rootBtn");
+    const status = document.getElementById("status");
 
-// Elements
-const statusText = document.getElementById("status");
-const acquireBtn = document.getElementById("acquireBtn");
+    secureBtn.onclick = () => {
+      STATE = "SECURE_CALL";
+      setActive(secureBtn);
+      status.innerText = "STATE: SECURE_CALL → Channel not yet bound";
+    };
 
-// Utils
-function updateStatus(text) {
-  statusText.innerText = text;
-}
+    ainBtn.onclick = () => {
+      if (STATE !== "SECURE_CALL") {
+        status.innerText = "ERROR: Secure Call required first";
+        status.style.color = "red";
+        return;
+      }
+      STATE = "AIN_ISSUED";
+      setActive(ainBtn);
+      status.style.color = "#00ff00";
+      status.innerText = "STATE: AIN_REQUEST → AIN issuance pending";
+    };
 
-// AIN Validation
-function isValidAIN(name) {
-  return /^[a-zA-Z0-9_-]{3,32}$/.test(name);
-}
+    idBtn.onclick = () => {
+      if (STATE !== "AIN_ISSUED") {
+        status.innerText = "ERROR: AIN required before identity binding";
+        status.style.color = "red";
+        return;
+      }
+      STATE = "IDENTITY_BOUND";
+      setActive(idBtn);
+      status.style.color = "#00ff00";
+      status.innerText = "STATE: IDENTITY_BOUND → identity verified";
+    };
 
-// Acquire AIN
-acquireBtn.onclick = () => {
-  if (Engine.state !== "idle") {
-    updateStatus("Engine busy. Current state: " + Engine.state);
-    return;
-  }
+    rootBtn.onclick = () => {
+      if (STATE !== "IDENTITY_BOUND") {
+        status.innerText = "ERROR: Identity verification required";
+        status.style.color = "red";
+        return;
+      }
+      STATE = "ROOT_GRANTED";
+      setActive(rootBtn);
+      status.style.color = "#00ff00";
+      status.innerText = "STATE: ROOT_GRANTED → system-level access";
+    };
 
-  const name = prompt("Enter AIN name (3–32 chars, alphanumeric):");
-  if (!name) {
-    updateStatus("AIN creation cancelled.");
-    return;
-  }
-
-  if (!isValidAIN(name)) {
-    updateStatus("Invalid AIN format.");
-    return;
-  }
-
-  if (Engine.registry[name]) {
-    updateStatus("AIN already exists.");
-    return;
-  }
-
-  // Create AIN
-  Engine.registry[name] = {
-    name,
-    createdAt: new Date().toISOString(),
-    owner: "local-root",
-    status: "active"
-  };
-
-  Engine.currentAIN = name;
-  Engine.state = "ain_issued";
-
-  updateStatus(`AIN '${name}' successfully issued.`);
-  console.log("AIN Registry:", Engine.registry);
-};
-</script>STEP 3 – AIN Create Engine
+    function setActive(btn) {
+      document.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
   </script>
+
 </body>
 </html>
