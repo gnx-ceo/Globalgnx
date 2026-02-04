@@ -28,7 +28,6 @@
     h1 {
       margin-bottom: 24px;
       font-size: 32px;
-      letter-spacing: 1px;
     }
 
     button {
@@ -37,7 +36,6 @@
       background: transparent;
       border: 1px solid #00ff00;
       color: #00ff00;
-      font-size: 14px;
       cursor: pointer;
     }
 
@@ -49,7 +47,7 @@
     #status {
       margin-top: 24px;
       font-size: 13px;
-      opacity: 0.8;
+      opacity: 0.85;
     }
 
     footer {
@@ -65,12 +63,12 @@
   <div class="root">
     <h1>Globalgnx</h1>
 
-    <button id="call">Start Secure Call</button>
-    <button id="ain">Acquire AIN</button>
-    <button id="me">My Identity</button>
-    <button id="root">Root Access</button>
+    <button onclick="engine.secureCall()">Start Secure Call</button>
+    <button onclick="engine.acquireAIN()">Acquire AIN</button>
+    <button onclick="engine.identity()">My Identity</button>
+    <button onclick="engine.root()">Root Access</button>
 
-    <div id="status">GNX AIPhone Engine: idle</div>
+    <div id="status"></div>
   </div>
 
   <footer>GNX Network · AIPhone Engine</footer>
@@ -78,21 +76,32 @@
   <script>
     const status = document.getElementById("status");
 
-    document.getElementById("call").onclick = () => {
-      status.innerText = "Secure Call module: not connected";
+    const engine = {
+      state: "idle",
+
+      setState(next, message) {
+        this.state = next;
+        status.innerText = `STATE: ${this.state} → ${message}`;
+      },
+
+      secureCall() {
+        this.setState("SECURE_CALL", "Channel not yet bound");
+      },
+
+      acquireAIN() {
+        this.setState("AIN_REQUEST", "AIN issuance pending");
+      },
+
+      identity() {
+        this.setState("IDENTITY", "No identity loaded");
+      },
+
+      root() {
+        this.setState("ROOT", "Root access locked (local)");
+      }
     };
 
-    document.getElementById("ain").onclick = () => {
-      status.innerText = "AIN Registry: awaiting issuance";
-    };
-
-    document.getElementById("me").onclick = () => {
-      status.innerText = "Identity Core: no active profile";
-    };
-
-    document.getElementById("root").onclick = () => {
-      status.innerText = "Root Console: permission denied (local only)";
-    };
+    engine.setState("idle", "Engine initialized");
   </script>
 </body>
 </html>
