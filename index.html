@@ -2,123 +2,142 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Globalgnx</title>
+  <title>GNX AIPhone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
-    body {
+    html, body {
       margin: 0;
-      background: black;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
       color: #00ff00;
-      font-family: monospace;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+      height: 100%;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      height: 100vh;
+      justify-content: center;
+      text-align: center;
     }
 
     h1 {
-      margin-bottom: 30px;
+      margin-bottom: 40px;
+      font-size: 42px;
+      letter-spacing: 1px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     button {
       width: 260px;
-      padding: 14px;
-      margin: 10px 0;
+      padding: 14px 0;
       background: transparent;
       border: 2px solid #00ff00;
       color: #00ff00;
-      cursor: pointer;
       font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      background: rgba(0, 255, 0, 0.15);
     }
 
     button.active {
       background: #00ff00;
-      color: black;
+      color: #000;
     }
 
-    #status {
-      margin-top: 30px;
+    #state {
+      margin-top: 40px;
       font-size: 14px;
-      min-height: 20px;
+      opacity: 0.85;
     }
 
-    footer {
-      position: absolute;
-      bottom: 10px;
+    .footer {
+      position: fixed;
+      left: 20px;
+      bottom: 20px;
       font-size: 12px;
-      opacity: 0.7;
+      opacity: 0.6;
     }
   </style>
 </head>
+
 <body>
+  <div class="container">
+    <h1>Globalgnx</h1>
 
-  <h1>Globalgnx</h1>
+    <div class="menu">
+      <button id="start-call">Start Secure Call</button>
+      <button id="acquire-ain">Acquire AIN</button>
+      <button id="my-identity">My Identity</button>
+      <button id="root-access">Root Access</button>
+    </div>
 
-  <button id="secureBtn">Start Secure Call</button>
-  <button id="ainBtn">Acquire AIN</button>
-  <button id="idBtn">My Identity</button>
-  <button id="rootBtn">Root Access</button>
+    <div id="state">STATE: ENGINE_IDLE</div>
+  </div>
 
-  <div id="status">GNX AIPhone Engine: idle</div>
-
-  <footer>GNX Network · AIPhone Engine</footer>
+  <div class="footer">GNX Network · AIPhone Engine</div>
 
   <script>
-    let STATE = "IDLE";
-
-    const secureBtn = document.getElementById("secureBtn");
-    const ainBtn = document.getElementById("ainBtn");
-    const idBtn = document.getElementById("idBtn");
-    const rootBtn = document.getElementById("rootBtn");
-    const status = document.getElementById("status");
-
-    secureBtn.onclick = () => {
-      STATE = "SECURE_CALL";
-      setActive(secureBtn);
-      status.innerText = "STATE: SECURE_CALL → Channel not yet bound";
+    const buttons = {
+      secure: document.getElementById("start-call"),
+      ain: document.getElementById("acquire-ain"),
+      identity: document.getElementById("my-identity"),
+      root: document.getElementById("root-access")
     };
 
-    ainBtn.onclick = () => {
-      if (STATE !== "SECURE_CALL") {
-        status.innerText = "ERROR: Secure Call required first";
-        status.style.color = "red";
-        return;
-      }
-      STATE = "AIN_ISSUED";
-      setActive(ainBtn);
-      status.style.color = "#00ff00";
-      status.innerText = "STATE: AIN_REQUEST → AIN issuance pending";
-    };
+    const stateText = document.getElementById("state");
 
-    idBtn.onclick = () => {
-      if (STATE !== "AIN_ISSUED") {
-        status.innerText = "ERROR: AIN required before identity binding";
-        status.style.color = "red";
-        return;
-      }
-      STATE = "IDENTITY_BOUND";
-      setActive(idBtn);
-      status.style.color = "#00ff00";
-      status.innerText = "STATE: IDENTITY_BOUND → identity verified";
-    };
+    let currentState = "ENGINE_IDLE";
 
-    rootBtn.onclick = () => {
-      if (STATE !== "IDENTITY_BOUND") {
-        status.innerText = "ERROR: Identity verification required";
-        status.style.color = "red";
-        return;
-      }
-      STATE = "ROOT_GRANTED";
-      setActive(rootBtn);
-      status.style.color = "#00ff00";
-      status.innerText = "STATE: ROOT_GRANTED → system-level access";
-    };
-
-    function setActive(btn) {
-      document.querySelectorAll("button").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
+    function resetButtons() {
+      Object.values(buttons).forEach(btn => {
+        btn.classList.remove("active");
+      });
     }
-  </script>
 
+    function setState(state, label) {
+      currentState = state;
+      stateText.innerText = `STATE: ${label}`;
+    }
+
+    buttons.secure.onclick = () => {
+      resetButtons();
+      buttons.secure.classList.add("active");
+      setState("SECURE_CALL", "SECURE_CALL → Channel not yet bound");
+    };
+
+    buttons.ain.onclick = () => {
+      resetButtons();
+      buttons.ain.classList.add("active");
+      setState("AIN_REQUEST", "AIN_REQUEST → AIN issuance pending");
+    };
+
+    buttons.identity.onclick = () => {
+      resetButtons();
+      buttons.identity.classList.add("active");
+      setState("IDENTITY", "IDENTITY → Profile loaded");
+    };
+
+    buttons.root.onclick = () => {
+      resetButtons();
+      buttons.root.classList.add("active");
+      setState("ROOT_ACCESS", "ROOT_ACCESS → Restricted");
+    };
+
+    // 초기 상태
+    setState("ENGINE_IDLE", "ENGINE_IDLE");
+  </script>
 </body>
 </html>
