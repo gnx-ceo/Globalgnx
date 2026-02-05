@@ -53,13 +53,25 @@
   .state {
     margin-top: 20px;
     font-size: 14px;
-  }
+  }#pulse {
+  margin-top: 20px;
+  font-size: 12px;
+  opacity: 0.4;
+  animation: breathe 3s infinite;
+}
+
+@keyframes breathe {
+  0%   { opacity: 0.2; }
+  50%  { opacity: 0.9; }
+  100% { opacity: 0.2; }
+}
 </style>
 </head>
 
 <body>
 
 <div class="container">
+  <div id="pulse">ENGINE HEARTBEAT</div>
   <h1>GlobalGNX</h1>
 
   <button class="menu-btn" data-floor="1">1F – Secure Call</button>
