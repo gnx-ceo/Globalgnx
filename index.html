@@ -1,31 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <title>GlobalGNX</title>
   <style>
-    body {
-      background: black;
-      color: #00ff66;
-      font-family: monospace;
-    }
-    h1 { margin-bottom: 20px; }
+    body { background:black; color:#00ff66; font-family: monospace; }
     button {
-      display: block;
-      width: 220px;
-      margin: 10px 0;
-      padding: 12px;
-      background: transparent;
-      color: #00ff66;
-      border: 1px solid #00ff66;
-      cursor: pointer;
+      display:block;
+      margin:10px 0;
+      padding:15px;
+      width:260px;
+      background:black;
+      border:1px solid #00ff66;
+      color:#00ff66;
     }
     button.active {
-      background: #00ff66;
-      color: black;
-    }
-    #stateText {
-      margin-top: 20px;
+      background:#00ff66;
+      color:black;
     }
   </style>
 </head>
@@ -34,14 +25,12 @@
 <h1>GlobalGNX</h1>
 
 <button id="secureCall">Start Secure Call</button>
-<button id="ain" disabled>Acquire AIN</button>
-<button id="identity" disabled>My Identity</button>
-<button id="root" disabled>Root Access</button>
+<button id="ain">Acquire AIN</button>
+<button id="identity">My Identity</button>
+<button id="root">Root Access</button>
 
-<div id="stateText">STATE: DISCONNECTED</div>
+<p id="stateText">STATE: DISCONNECTED</p>
 
-<!-- ⚠️ 이 줄이 없으면 버튼 전부 죽습니다 -->
 <script src="main.js"></script>
-
 </body>
 </html>
