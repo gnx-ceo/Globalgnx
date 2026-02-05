@@ -25,12 +25,12 @@ html, body {
   text-align: center;
 }
 
-/* 심장 */
-#heart {
+/* 생명 신호 */
+#pulse {
   font-size: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   opacity: 0.4;
-  animation: heartbeat 2s infinite;
+  animation: breathe-idle 4s infinite;
 }
 
 /* 제목 */
@@ -62,11 +62,17 @@ button.active {
   font-size: 14px;
 }
 
-/* 심장 박동 애니메이션 */
-@keyframes heartbeat {
+/* ───── 생명 애니메이션 ───── */
+@keyframes breathe-idle {
   0%   { opacity: 0.2; }
-  50%  { opacity: 0.9; }
+  50%  { opacity: 0.7; }
   100% { opacity: 0.2; }
+}
+
+@keyframes breathe-active {
+  0%   { opacity: 0.3; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.3; }
 }
 </style>
 </head>
@@ -75,12 +81,12 @@ button.active {
 
 <div class="container">
 
-  <!-- 심장 -->
-  <div id="heart">♥ HEARTBEAT: IDLE</div>
+  <!-- 정체성 (심장 자리 대체) -->
+  <div id="pulse">U R Ur ID</div>
 
   <h1>GNX AIN eXchange</h1>
 
-  <!-- 기관들 -->
+  <!-- 기관 -->
   <button class="organ" data-floor="1">1F – Secure Call</button>
   <button class="organ" data-floor="2">2F – Acquire AIN</button>
   <button class="organ" data-floor="3">3F – My Identity</button>
@@ -90,24 +96,28 @@ button.active {
 </div>
 
 <script>
-/* 🧠 유기체 코어 */
-const organism = {
-  heartRate: 2000,   // ms
-  state: "IDLE",
-  alive: true
-};
+/* 🧬 유기체 상태 */
+let active = false;
 
-const heart = document.getElementById("heart");
+const pulse = document.getElementById("pulse");
 const stateView = document.getElementById("state");
 const organs = document.querySelectorAll(".organ");
 
-/* 심장 박동 제어 */
-function setHeartRate(ms) {
-  heart.style.animation = `heartbeat ${ms}ms infinite`;
-  organism.heartRate = ms;
+/* IDLE 상태 */
+function setIdle() {
+  active = false;
+  pulse.style.animation = "breathe-idle 4s infinite";
+  stateView.textContent = "STATE: IDLE";
 }
 
-/* 기관 자극 */
+/* ACTIVE 상태 */
+function setActive(floor) {
+  active = true;
+  pulse.style.animation = "breathe-active 1.2s infinite";
+  stateView.textContent = `STATE: FLOOR ${floor}`;
+}
+
+/* 자극 처리 */
 organs.forEach(btn => {
   btn.addEventListener("click", () => {
 
@@ -119,21 +129,19 @@ organs.forEach(btn => {
 
     const floor = btn.dataset.floor;
 
-    // 상태 변화 = 혈류 변화
-    organism.state = `FLOOR ${floor}`;
-    stateView.textContent = `STATE: FLOOR ${floor}`;
-    heart.textContent = `♥ HEARTBEAT: FLOOR ${floor}`;
+    // 활성화
+    setActive(floor);
 
-    // 자극 → 심박 증가
-    setHeartRate(800);
-
-    // 시간이 지나면 안정
+    // 일정 시간 후 다시 안정
     setTimeout(() => {
-      setHeartRate(2000);
-      heart.textContent = `♥ HEARTBEAT: CALM`;
-    }, 2500);
+      organs.forEach(b => b.classList.remove("active"));
+      setIdle();
+    }, 3000);
   });
 });
+
+/* 초기 상태 */
+setIdle();
 </script>
 
 </body>
