@@ -1,53 +1,62 @@
-/* ===== CONFIG ===== */
-const WS_URL = "wss://YOUR_API_ID.execute-api.ap-southeast-2.amazonaws.com/prod";
-/* ================== */
+const WS_URL = "wss://gmcpl21323.execute-api.ap-southeast-2.amazonaws.com/dev";
 
-const wsStatus = document.getElementById("wsStatus");
-const lambdaStatus = document.getElementById("lambdaStatus");
-const stateText = document.getElementById("stateText");
+let socket;
+
+const wsState = document.getElementById("ws");
+const lambdaState = document.getElementById("lambda");
+const stateText = document.getElementById("state");
 
 const secureBtn = document.getElementById("secureCall");
 const ainBtn = document.getElementById("ain");
 const idBtn = document.getElementById("identity");
 const rootBtn = document.getElementById("root");
 
-const buttons = [secureBtn, ainBtn, idBtn, rootBtn];
+function connectWS() {
+  socket = new WebSocket(WS_URL);
 
-const ws = new WebSocket(WS_URL);
+  socket.onopen = () => {
+    wsState.innerText = "CONNECTED";
+  };
 
-/* ===== ENGINE STATUS ===== */
-ws.onopen = () => {
-  wsStatus.innerText = "WebSocket: CONNECTED";
-};
+  socket.onclose = () => {
+    wsState.innerText = "DISCONNECTED";
+  };
 
-ws.onclose = () => {
-  wsStatus.innerText = "WebSocket: DISCONNECTED";
-};
+  socket.onmessage = (e) => {
+    const msg = JSON.parse(e.data);
+    lambdaState.innerText = "OK";
 
-ws.onerror = () => {
-  wsStatus.innerText = "WebSocket: ERROR";
-};
-
-ws.onmessage = (event) => {
-  lambdaStatus.innerText = "Lambda: OK";
-  const data = JSON.parse(event.data);
-  stateText.innerText = "STATE: " + data.routeKey;
-};
-
-/* ===== UI HELPERS ===== */
-function resetButtons() {
-  buttons.forEach(b => b.classList.remove("active"));
+    if (msg.state) {
+      stateText.innerText = "STATE: " + msg.state;
+    }
+  };
 }
 
-function send(action, btn, label) {
-  resetButtons();
-  btn.classList.add("active");
-  stateText.innerText = "STATE: " + label;
-  ws.send(JSON.stringify({ action }));
+connectWS();
+
+function send(action) {
+  socket.send(JSON.stringify({ action }));
 }
 
-/* ===== BUTTON EVENTS ===== */
-secureBtn.onclick = () => send("SECURE_CALL", secureBtn, "SECURE_CALL");
-ainBtn.onclick = () => send("AIN_REQUEST", ainBtn, "AIN_REQUESTED");
-idBtn.onclick = () => send("IDENTITY", idBtn, "IDENTITY_BOUND");
-rootBtn.onclick = () => send("ROOT", rootBtn, "ROOT_GRANTED");
+secureBtn.onclick = () => {
+  send("SECURE_CALL");
+  secureBtn.classList.add("active");
+  ainBtn.disabled = false;
+};
+
+ainBtn.onclick = () => {
+  send("AIN_REQUEST");
+  ainBtn.classList.add("active");
+  idBtn.disabled = false;
+};
+
+idBtn.onclick = () => {
+  send("IDENTITY_BIND");
+  idBtn.classList.add("active");
+  rootBtn.disabled = false;
+};
+
+rootBtn.onclick = () => {
+  send("ROOT_ACCESS");
+  rootBtn.classList.add("active");
+};
