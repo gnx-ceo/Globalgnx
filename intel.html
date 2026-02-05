@@ -1,36 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
-  <title>GlobalGNX Intelligence</title>
+  <meta charset="utf-8">
+  <title>GNX Intelligence</title>
   <style>
     body {
-      background: black;
-      color: #00ff66;
+      background:black;
+      color:#00ff66;
       font-family: monospace;
-    }
-    pre {
-      border: 1px solid #00ff66;
-      padding: 15px;
     }
   </style>
 </head>
 <body>
 
-<h2>GNX Intelligence Console</h2>
-
-<pre id="log">Waiting...</pre>
+<h2>GNX :: Intelligence Console</h2>
+<pre id="log">Awaiting intelligence stream...</pre>
 
 <script>
-const log = document.getElementById("log");
+  const log = document.getElementById("log");
 
-const ws = new WebSocket(
-  "wss://YOUR_API_ID.execute-api.ap-southeast-2.amazonaws.com/prod"
-);
+  const ws = new WebSocket(
+    "wss://YOUR_API_ID.execute-api.ap-southeast-2.amazonaws.com/prod"
+  );
 
-ws.onmessage = (e) => {
-  log.innerText += "\n" + e.data;
-};
+  ws.onmessage = (e) => {
+    log.innerText += "\n" + e.data;
+  };
 </script>
 
 </body>
