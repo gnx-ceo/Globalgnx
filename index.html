@@ -1,87 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>GlobalGNX</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <style>
-    body {
-      margin: 0;
-      background: #000;
-      color: #00ff66;
-      font-family: monospace;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .tower {
-      border: 2px solid #00ff66;
-      padding: 30px;
-      width: 320px;
-      text-align: center;
-    }
-
-    h1 {
-      margin-top: 0;
-      margin-bottom: 25px;
-      letter-spacing: 2px;
-    }
-
-    button {
-      width: 100%;
-      margin: 10px 0;
-      padding: 12px;
-      background: transparent;
-      border: 2px solid #00ff66;
-      color: #00ff66;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    button.active {
-      background: #00ff66;
-      color: #000;
-    }
-
-    #stateText {
-      margin-top: 20px;
-      font-size: 13px;
-    }
-
-    .engine-room {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      border: 1px solid #00ff66;
-      padding: 12px;
-      background: rgba(0,0,0,0.85);
-      font-size: 12px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>GlobalGNX</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+html, body {
+  margin: 0; padding: 0;
+  width: 100%; height: 100%;
+  background: #000;
+  font-family: monospace;
+  color: #00ff66;
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#building {
+  border: 2px solid #00ff66;
+  padding: 30px;
+  width: 320px;
+  text-align: center;
+}
+h1 { margin-bottom: 20px; }
+button {
+  width: 100%;
+  margin: 8px 0;
+  padding: 14px;
+  background: transparent;
+  color: #00ff66;
+  border: 2px solid #00ff66;
+  cursor: pointer;
+}
+button.active {
+  background: #00ff66;
+  color: #000;
+}
+#state {
+  margin-top: 15px;
+}
+#engine {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  border: 2px solid #00ff66;
+  padding: 10px;
+  font-size: 12px;
+}
+</style>
 </head>
 
 <body>
-  <div class="tower">
+  <div id="building">
     <h1>GlobalGNX</h1>
 
     <button id="secureCall">Start Secure Call</button>
-    <button id="ain">Acquire AIN</button>
-    <button id="identity">My Identity</button>
-    <button id="root">Root Access</button>
+    <button id="ain" disabled>Acquire AIN</button>
+    <button id="identity" disabled>My Identity</button>
+    <button id="root" disabled>Root Access</button>
 
-    <div id="stateText">STATE: IDLE</div>
+    <div id="state">STATE: IDLE</div>
   </div>
 
-  <!-- ENGINE ROOM -->
-  <div class="engine-room">
-    <div>ENGINE STATUS</div>
-    <div id="wsStatus">WebSocket: DISCONNECTED</div>
-    <div id="lambdaStatus">Lambda: UNKNOWN</div>
+  <div id="engine">
+    ENGINE STATUS<br/>
+    WebSocket: <span id="ws">DISCONNECTED</span><br/>
+    Lambda: <span id="lambda">UNKNOWN</span>
   </div>
 
-  <script src="./main.js"></script>
+<script src="main.js"></script>
 </body>
 </html>
