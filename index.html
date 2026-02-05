@@ -78,7 +78,9 @@
   <button class="menu-btn" data-floor="2">2F – Acquire AIN</button>
   <button class="menu-btn" data-floor="3">3F – My Identity</button>
   <button class="menu-btn" data-floor="4">4F – Root Access</button>
-
+<div id="pulse">ENGINE HEARTBEAT</div>
+  <div class="state" id="state">STATE: IDLE</div>
+</div>
   <div class="state" id="state">STATE: IDLE</div>
 </div>
 
@@ -93,7 +95,17 @@
       btn.classList.add('active');
       state.textContent = 'STATE: FLOOR ' + btn.dataset.floor;
     });
-  });
+  });let alive = false;
+  const pulse = document.getElementById("pulse");
+
+  setInterval(() => {
+    if (!alive) {
+      pulse.textContent = "ENGINE DORMANT";
+      pulse.style.opacity = 0.2;
+    } else {
+      pulse.textContent = "ENGINE HEARTBEAT";
+    }
+  }, 3000);
 </script>
 
 </body>
