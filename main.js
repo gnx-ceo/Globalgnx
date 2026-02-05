@@ -3,28 +3,26 @@
 // ===============================
 
 let socket = null;
-let currentState = "IDLE";
 
-// 모든 층 버튼 ID
-const FLOORS = [
-  "btn-secure-call", // 1F
-  "btn-ain",         // 2F
-  "btn-identity",    // 3F
-  "btn-root"         // 4F
-];
+// 모든 버튼 DOM 직접 보관
+const buttons = {
+  secure: document.getElementById("btn-secure-call"),
+  ain: document.getElementById("btn-ain"),
+  identity: document.getElementById("btn-identity"),
+  root: document.getElementById("btn-root")
+};
 
-// 상태 표시
 const stateEl = document.getElementById("state");
 const wsStatusEl = document.getElementById("ws-status");
 const lambdaStatusEl = document.getElementById("lambda-status");
 
 // -------------------------------
-// WebSocket 연결
+// WebSocket
 // -------------------------------
 function connectWebSocket() {
-  const WS_URL = "wss://gmcpl21323.execute-api.ap-southeast-2.amazonaws.com/dev/";
-
-  socket = new WebSocket(WS_URL);
+  socket = new WebSocket(
+    "wss://gmcpl21323.execute-api.ap-southeast-2.amazonaws.com/dev/"
+  );
 
   socket.onopen = () => {
     wsStatusEl.textContent = "CONNECTED";
@@ -35,54 +33,31 @@ function connectWebSocket() {
     wsStatusEl.textContent = "DISCONNECTED";
     lambdaStatusEl.textContent = "UNKNOWN";
   };
-
-  socket.onerror = () => {
-    wsStatusEl.textContent = "ERROR";
-    lambdaStatusEl.textContent = "ERROR";
-  };
 }
 
 connectWebSocket();
 
 // -------------------------------
-// UI 상태 제어 (🔥 핵심 로직)
+// 🔥 핵심: 모든 불 끄기
 // -------------------------------
-function activateFloor(activeId, stateName) {
-  // 🔴 1️⃣ 모든 층 OFF
-  FLOORS.forEach(id => {
-    document.getElementById(id).classList.remove("active");
+function turnOffAllLights() {
+  Object.values(buttons).forEach(btn => {
+    btn.style.background = "transparent";
+    btn.style.color = "#00ff66";
   });
-
-  // 🟢 2️⃣ 선택된 층만 ON
-  document.getElementById(activeId).classList.add("active");
-
-  // 상태 텍스트 갱신
-  currentState = stateName;
-  stateEl.textContent = `STATE: ${stateName}`;
 }
 
 // -------------------------------
-// 버튼 이벤트 바인딩
+// 🔥 선택된 층만 켜기
 // -------------------------------
-document.getElementById("btn-secure-call").onclick = () => {
-  activateFloor("btn-secure-call", "SECURE_CALL");
-  sendAction("secure_call");
-};
+function turnOn(btn, stateName) {
+  turnOffAllLights(); // ← 여기서 100% 소등
 
-document.getElementById("btn-ain").onclick = () => {
-  activateFloor("btn-ain", "AIN_REQUESTED");
-  sendAction("acquire_ain");
-};
+  btn.style.background = "#00ff66";
+  btn.style.color = "#000";
 
-document.getElementById("btn-identity").onclick = () => {
-  activateFloor("btn-identity", "IDENTITY_BOUND");
-  sendAction("my_identity");
-};
-
-document.getElementById("btn-root").onclick = () => {
-  activateFloor("btn-root", "ROOT_GRANTED");
-  sendAction("root_access");
-};
+  stateEl.textContent = `STATE: ${stateName}`;
+}
 
 // -------------------------------
 // Lambda 전송
@@ -95,3 +70,26 @@ function sendAction(action) {
     timestamp: Date.now()
   }));
 }
+
+// -------------------------------
+// 버튼 이벤트
+// -------------------------------
+buttons.secure.onclick = () => {
+  turnOn(buttons.secure, "SECURE_CALL");
+  sendAction("secure_call");
+};
+
+buttons.ain.onclick = () => {
+  turnOn(buttons.ain, "AIN_REQUESTED");
+  sendAction("acquire_ain");
+};
+
+buttons.identity.onclick = () => {
+  turnOn(buttons.identity, "IDENTITY_BOUND");
+  sendAction("my_identity");
+};
+
+buttons.root.onclick = () => {
+  turnOn(buttons.root, "ROOT_GRANTED");
+  sendAction("root_access");
+};
