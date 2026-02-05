@@ -3,9 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GNX AIN eXchage</title>
+<title>GNX AIN eXchange</title>
 
 <style>
+  * {
+    box-sizing: border-box;
+    font-family: monospace;
+  }
+
   html, body {
     margin: 0;
     padding: 0;
@@ -13,10 +18,9 @@
     height: 100%;
     background: #000;
     color: #00ff66;
-    font-family: monospace;
   }
 
-  /* 중앙 컨테이너 */
+  /* 중앙 건물 */
   .container {
     max-width: 360px;
     margin: 80px auto;
@@ -26,11 +30,12 @@
   }
 
   h1 {
-    margin-bottom: 30px;
+    margin: 25px 0 35px;
+    letter-spacing: 2px;
   }
 
-  /* 버튼은 무조건 터치 가능 */
-  button {
+  /* 층 버튼 */
+  .menu-btn {
     display: block;
     width: 100%;
     margin: 14px 0;
@@ -40,31 +45,35 @@
     color: #00ff66;
     border: 2px solid #00ff66;
     cursor: pointer;
-    pointer-events: auto;   /* 🔥 핵심 */
-    z-index: 10;            /* 🔥 핵심 */
-    position: relative;     /* 🔥 핵심 */
+    transition: all 0.25s ease;
   }
 
-  button.active {
+  /* 🔥 활성화된 층 (단 하나만) */
+  .menu-btn.active {
     background: #00ff66;
     color: #000;
+    box-shadow: 0 0 18px #00ff66;
   }
 
   .state {
-    margin-top: 20px;
+    margin-top: 22px;
     font-size: 14px;
-  }#pulse {
-  margin-top: 20px;
-  font-size: 12px;
-  opacity: 0.4;
-  animation: breathe 3s infinite;
-}
+    opacity: 0.85;
+  }
 
-@keyframes breathe {
-  0%   { opacity: 0.2; }
-  50%  { opacity: 0.9; }
-  100% { opacity: 0.2; }
-}
+  /* 생명 심박 */
+  #pulse {
+    margin-top: 10px;
+    font-size: 12px;
+    opacity: 0.4;
+    animation: breathe 3s infinite;
+  }
+
+  @keyframes breathe {
+    0%   { opacity: 0.2; }
+    50%  { opacity: 0.9; }
+    100% { opacity: 0.2; }
+  }
 </style>
 </head>
 
@@ -72,39 +81,40 @@
 
 <div class="container">
   <div id="pulse">U R Ur ID</div>
+
   <h1>GNX AIN eXchange</h1>
 
   <button class="menu-btn" data-floor="1">1F – Secure Call</button>
   <button class="menu-btn" data-floor="2">2F – Acquire AIN</button>
   <button class="menu-btn" data-floor="3">3F – My Identity</button>
   <button class="menu-btn" data-floor="4">4F – Root Access</button>
-<div id="pulse">U R Ur ID</div>
-  <div class="state" id="state">STATE: IDLE</div>
-</div>
+
   <div class="state" id="state">STATE: IDLE</div>
 </div>
 
 <script>
-  // 🔥 터치 테스트용 JS
+  /* ===== 층 제어 로직 (단 하나만 활성) ===== */
   const buttons = document.querySelectorAll('.menu-btn');
   const state = document.getElementById('state');
 
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
+      // 모든 층 불 끄기
       buttons.forEach(b => b.classList.remove('active'));
+
+      // 선택한 층만 점등
       btn.classList.add('active');
+
+      // 상태 반영
       state.textContent = 'STATE: FLOOR ' + btn.dataset.floor;
     });
-  });let alive = false;
+  });
+
+  /* ===== 생명 유지 심박 ===== */
   const pulse = document.getElementById("pulse");
 
   setInterval(() => {
-    if (!alive) {
-      pulse.textContent = "U R Ur ID";
-      pulse.style.opacity = 0.2;
-    } else {
-      pulse.textContent = "U R Ur ID";
-    }
+    pulse.textContent = "U R Ur ID";
   }, 3000);
 </script>
 
