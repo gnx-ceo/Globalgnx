@@ -1,36 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GlobalGNX</title>
+
   <style>
-    body { background:black; color:#00ff66; font-family: monospace; }
-    button {
-      display:block;
-      margin:10px 0;
-      padding:15px;
-      width:260px;
-      background:black;
-      border:1px solid #00ff66;
-      color:#00ff66;
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background: #000;
+      font-family: monospace;
     }
+
+    /* 전체 땅 */
+    #viewport {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* GNX 본관 건물 */
+    #gnx-building {
+      width: min(90vw, 420px);
+      min-height: 540px;
+      padding: 24px;
+      border: 2px solid #00ff66;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      color: #00ff66;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    button {
+      background: transparent;
+      color: #00ff66;
+      border: 2px solid #00ff66;
+      padding: 16px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
     button.active {
-      background:#00ff66;
-      color:black;
+      background: #00ff66;
+      color: #000;
+    }
+
+    #stateText {
+      margin-top: 24px;
+      color: #00ff66;
+      text-align: center;
+      font-size: 14px;
     }
   </style>
 </head>
+
 <body>
+  <div id="viewport">
+    <div id="gnx-building">
+      <h1>GlobalGNX</h1>
 
-<h1>GlobalGNX</h1>
+      <div class="panel">
+        <button id="secureCall">Start Secure Call</button>
+        <button id="ain">Acquire AIN</button>
+        <button id="identity">My Identity</button>
+        <button id="root">Root Access</button>
+      </div>
 
-<button id="secureCall">Start Secure Call</button>
-<button id="ain">Acquire AIN</button>
-<button id="identity">My Identity</button>
-<button id="root">Root Access</button>
+      <div id="stateText">STATE: IDLE</div>
+    </div>
+  </div>
 
-<p id="stateText">STATE: DISCONNECTED</p>
-
-<script src="main.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
