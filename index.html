@@ -6,80 +6,75 @@
 <title>GNX AIN eXchange</title>
 
 <style>
-  * {
-    box-sizing: border-box;
-    font-family: monospace;
-  }
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  color: #00ff66;
+  font-family: monospace;
+}
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    background: #000;
-    color: #00ff66;
-  }
+/* 중앙 컨테이너 */
+.container {
+  max-width: 360px;
+  margin: 80px auto;
+  padding: 30px;
+  border: 2px solid #00ff66;
+  text-align: center;
+}
 
-  /* 중앙 건물 */
-  .container {
-    max-width: 360px;
-    margin: 80px auto;
-    padding: 30px;
-    border: 2px solid #00ff66;
-    text-align: center;
-  }
+/* 타이틀 */
+h1 {
+  margin: 20px 0 30px;
+}
 
-  h1 {
-    margin: 25px 0 35px;
-    letter-spacing: 2px;
-  }
+/* 버튼 */
+button {
+  display: block;
+  width: 100%;
+  margin: 14px 0;
+  padding: 16px;
+  font-size: 16px;
+  background: transparent;
+  color: #00ff66;
+  border: 2px solid #00ff66;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+}
 
-  /* 층 버튼 */
-  .menu-btn {
-    display: block;
-    width: 100%;
-    margin: 14px 0;
-    padding: 16px;
-    font-size: 16px;
-    background: transparent;
-    color: #00ff66;
-    border: 2px solid #00ff66;
-    cursor: pointer;
-    transition: all 0.25s ease;
-  }
+button.active {
+  background: #00ff66;
+  color: #000;
+}
 
-  /* 🔥 활성화된 층 (단 하나만) */
-  .menu-btn.active {
-    background: #00ff66;
-    color: #000;
-    box-shadow: 0 0 18px #00ff66;
-  }
+/* 상태 */
+.state {
+  margin-top: 22px;
+  font-size: 14px;
+}
 
-  .state {
-    margin-top: 22px;
-    font-size: 14px;
-    opacity: 0.85;
-  }
+/* 생명 맥박 */
+#pulse {
+  font-size: 12px;
+  opacity: 0.4;
+  animation: breathe 3s infinite;
+}
 
-  /* 생명 심박 */
-  #pulse {
-    margin-top: 10px;
-    font-size: 12px;
-    opacity: 0.4;
-    animation: breathe 3s infinite;
-  }
-
-  @keyframes breathe {
-    0%   { opacity: 0.2; }
-    50%  { opacity: 0.9; }
-    100% { opacity: 0.2; }
-  }
+@keyframes breathe {
+  0%   { opacity: 0.2; }
+  50%  { opacity: 0.9; }
+  100% { opacity: 0.2; }
+}
 </style>
 </head>
 
 <body>
 
 <div class="container">
+
   <div id="pulse">U R Ur ID</div>
 
   <h1>GNX AIN eXchange</h1>
@@ -90,32 +85,37 @@
   <button class="menu-btn" data-floor="4">4F – Root Access</button>
 
   <div class="state" id="state">STATE: IDLE</div>
+
 </div>
 
 <script>
-  /* ===== 층 제어 로직 (단 하나만 활성) ===== */
-  const buttons = document.querySelectorAll('.menu-btn');
-  const state = document.getElementById('state');
+/* 버튼 & 상태 */
+const buttons = document.querySelectorAll('.menu-btn');
+const stateEl = document.getElementById('state');
 
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      // 모든 층 불 끄기
-      buttons.forEach(b => b.classList.remove('active'));
+/* 층 선택 */
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
 
-      // 선택한 층만 점등
-      btn.classList.add('active');
+    // 모든 층 불 끄기
+    buttons.forEach(b => b.classList.remove('active'));
 
-      // 상태 반영
-      state.textContent = 'STATE: FLOOR ' + btn.dataset.floor;
-    });
+    // 선택한 층만 불 켜기
+    btn.classList.add('active');
+
+    // 상태 갱신
+    stateEl.textContent = 'STATE: FLOOR ' + btn.dataset.floor;
   });
+});
 
-  /* ===== 생명 유지 심박 ===== */
-  const pulse = document.getElementById("pulse");
+/* 생명 신호 */
+let alive = false;
+const pulse = document.getElementById('pulse');
 
-  setInterval(() => {
-    pulse.textContent = "U R Ur ID";
-  }, 3000);
+setInterval(() => {
+  alive = !alive;
+  pulse.textContent = alive ? 'U R Ur ID' : 'U R Ur ID';
+}, 3000);
 </script>
 
 </body>
