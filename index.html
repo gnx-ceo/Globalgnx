@@ -1,128 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>GlobalGNX</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GlobalGNX</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    color: #00ff66;
+    font-family: monospace;
+  }
 
-    body {
-      margin: 0;
-      padding: 0;
-      background: #000;
-      color: #00ff66;
-      font-family: monospace;
-    }
+  /* 중앙 컨테이너 */
+  .container {
+    max-width: 360px;
+    margin: 80px auto;
+    padding: 30px;
+    border: 2px solid #00ff66;
+    text-align: center;
+  }
 
-    .container {
-      width: 360px;
-      margin: 80px auto;
-      padding: 30px;
-      border: 2px solid #00ff66;
-      text-align: center;
-    }
+  h1 {
+    margin-bottom: 30px;
+  }
 
-    h1 {
-      margin-bottom: 30px;
-      letter-spacing: 2px;
-    }
+  /* 버튼은 무조건 터치 가능 */
+  button {
+    display: block;
+    width: 100%;
+    margin: 14px 0;
+    padding: 16px;
+    font-size: 16px;
+    background: transparent;
+    color: #00ff66;
+    border: 2px solid #00ff66;
+    cursor: pointer;
+    pointer-events: auto;   /* 🔥 핵심 */
+    z-index: 10;            /* 🔥 핵심 */
+    position: relative;     /* 🔥 핵심 */
+  }
 
-    button {
-      display: block;
-      width: 100%;
-      margin: 14px 0;
-      padding: 14px;
-      background: transparent;
-      color: #00ff66;
-      border: 2px solid #00ff66;
-      cursor: pointer;
-      font-size: 14px;
-    }
+  button.active {
+    background: #00ff66;
+    color: #000;
+  }
 
-    button.active {
-      background: #00ff66;
-      color: #000;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    .state {
-      margin-top: 24px;
-      font-size: 13px;
-    }
-
-    .engine-status {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      border: 1px solid #00ff66;
-      padding: 10px;
-      font-size: 12px;
-      width: 220px;
-    }
-  </style>
+  .state {
+    margin-top: 20px;
+    font-size: 14px;
+  }
+</style>
 </head>
 
 <body>
 
-  <div class="container">
-    <h1>GlobalGNX</h1>
+<div class="container">
+  <h1>GlobalGNX</h1>
 
-    <button class="menu-btn" data-state="SECURE_CALL">
-      Start Secure Call
-    </button>
+  <button class="menu-btn" data-floor="1">1F – Secure Call</button>
+  <button class="menu-btn" data-floor="2">2F – Acquire AIN</button>
+  <button class="menu-btn" data-floor="3">3F – My Identity</button>
+  <button class="menu-btn" data-floor="4">4F – Root Access</button>
 
-    <button class="menu-btn" data-state="AIN_REQUESTED">
-      Acquire AIN
-    </button>
+  <div class="state" id="state">STATE: IDLE</div>
+</div>
 
-    <button class="menu-btn" data-state="IDENTITY_BOUND">
-      My Identity
-    </button>
+<script>
+  // 🔥 터치 테스트용 JS
+  const buttons = document.querySelectorAll('.menu-btn');
+  const state = document.getElementById('state');
 
-    <button class="menu-btn" data-state="ROOT_GRANTED">
-      Root Access
-    </button>
-
-    <div class="state" id="stateText">
-      STATE: IDLE
-    </div>
-  </div>
-
-  <div class="engine-status" id="engineStatus">
-    ENGINE STATUS<br/>
-    WebSocket: CONNECTED<br/>
-    Lambda: OK
-  </div>
-
-  <script>
-    // =========================
-    // UI STATE CONTROL (ONLY ONE LIGHT ON)
-    // =========================
-
-    const buttons = document.querySelectorAll('.menu-btn');
-    const stateText = document.getElementById('stateText');
-
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-
-        // 1️⃣ 모든 버튼 불 끄기
-        buttons.forEach(b => b.classList.remove('active'));
-
-        // 2️⃣ 클릭한 버튼만 불 켜기
-        btn.classList.add('active');
-
-        // 3️⃣ 상태 표시 변경
-        const state = btn.dataset.state;
-        stateText.textContent = `STATE: ${state}`;
-      });
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.textContent = 'STATE: FLOOR ' + btn.dataset.floor;
     });
-  </script>
+  });
+</script>
 
 </body>
 </html>
