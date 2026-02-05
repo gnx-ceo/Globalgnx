@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>GNX AIN eXchange</title>
 
 <style>
@@ -16,7 +16,7 @@ html, body {
   font-family: monospace;
 }
 
-/* 중앙 컨테이너 */
+/* 건물 */
 .container {
   max-width: 360px;
   margin: 80px auto;
@@ -25,12 +25,20 @@ html, body {
   text-align: center;
 }
 
-/* 타이틀 */
-h1 {
-  margin: 20px 0 30px;
+/* 심장 */
+#heart {
+  font-size: 12px;
+  margin-bottom: 10px;
+  opacity: 0.4;
+  animation: heartbeat 2s infinite;
 }
 
-/* 버튼 */
+/* 제목 */
+h1 {
+  margin-bottom: 30px;
+}
+
+/* 층(기관) */
 button {
   display: block;
   width: 100%;
@@ -41,8 +49,6 @@ button {
   color: #00ff66;
   border: 2px solid #00ff66;
   cursor: pointer;
-  position: relative;
-  z-index: 10;
 }
 
 button.active {
@@ -52,18 +58,12 @@ button.active {
 
 /* 상태 */
 .state {
-  margin-top: 22px;
+  margin-top: 20px;
   font-size: 14px;
 }
 
-/* 생명 맥박 */
-#pulse {
-  font-size: 12px;
-  opacity: 0.4;
-  animation: breathe 3s infinite;
-}
-
-@keyframes breathe {
+/* 심장 박동 애니메이션 */
+@keyframes heartbeat {
   0%   { opacity: 0.2; }
   50%  { opacity: 0.9; }
   100% { opacity: 0.2; }
@@ -75,47 +75,65 @@ button.active {
 
 <div class="container">
 
-  <div id="pulse">U R Ur ID</div>
+  <!-- 심장 -->
+  <div id="heart">♥ HEARTBEAT: IDLE</div>
 
   <h1>GNX AIN eXchange</h1>
 
-  <button class="menu-btn" data-floor="1">1F – Secure Call</button>
-  <button class="menu-btn" data-floor="2">2F – Acquire AIN</button>
-  <button class="menu-btn" data-floor="3">3F – My Identity</button>
-  <button class="menu-btn" data-floor="4">4F – Root Access</button>
+  <!-- 기관들 -->
+  <button class="organ" data-floor="1">1F – Secure Call</button>
+  <button class="organ" data-floor="2">2F – Acquire AIN</button>
+  <button class="organ" data-floor="3">3F – My Identity</button>
+  <button class="organ" data-floor="4">4F – Root Access</button>
 
   <div class="state" id="state">STATE: IDLE</div>
-
 </div>
 
 <script>
-/* 버튼 & 상태 */
-const buttons = document.querySelectorAll('.menu-btn');
-const stateEl = document.getElementById('state');
+/* 🧠 유기체 코어 */
+const organism = {
+  heartRate: 2000,   // ms
+  state: "IDLE",
+  alive: true
+};
 
-/* 층 선택 */
-buttons.forEach(btn => {
-  btn.addEventListener('click', () => {
+const heart = document.getElementById("heart");
+const stateView = document.getElementById("state");
+const organs = document.querySelectorAll(".organ");
 
-    // 모든 층 불 끄기
-    buttons.forEach(b => b.classList.remove('active'));
+/* 심장 박동 제어 */
+function setHeartRate(ms) {
+  heart.style.animation = `heartbeat ${ms}ms infinite`;
+  organism.heartRate = ms;
+}
 
-    // 선택한 층만 불 켜기
-    btn.classList.add('active');
+/* 기관 자극 */
+organs.forEach(btn => {
+  btn.addEventListener("click", () => {
 
-    // 상태 갱신
-    stateEl.textContent = 'STATE: FLOOR ' + btn.dataset.floor;
+    // 모든 기관 진정
+    organs.forEach(b => b.classList.remove("active"));
+
+    // 자극 받은 기관 활성
+    btn.classList.add("active");
+
+    const floor = btn.dataset.floor;
+
+    // 상태 변화 = 혈류 변화
+    organism.state = `FLOOR ${floor}`;
+    stateView.textContent = `STATE: FLOOR ${floor}`;
+    heart.textContent = `♥ HEARTBEAT: FLOOR ${floor}`;
+
+    // 자극 → 심박 증가
+    setHeartRate(800);
+
+    // 시간이 지나면 안정
+    setTimeout(() => {
+      setHeartRate(2000);
+      heart.textContent = `♥ HEARTBEAT: CALM`;
+    }, 2500);
   });
 });
-
-/* 생명 신호 */
-let alive = false;
-const pulse = document.getElementById('pulse');
-
-setInterval(() => {
-  alive = !alive;
-  pulse.textContent = alive ? 'U R Ur ID' : 'U R Ur ID';
-}, 3000);
 </script>
 
 </body>
