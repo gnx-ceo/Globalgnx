@@ -1,62 +1,97 @@
-const WS_URL = "wss://gmcpl21323.execute-api.ap-southeast-2.amazonaws.com/dev";
+// ===============================
+// GlobalGNX Main Controller
+// ===============================
 
-let socket;
+let socket = null;
+let currentState = "IDLE";
 
-const wsState = document.getElementById("ws");
-const lambdaState = document.getElementById("lambda");
-const stateText = document.getElementById("state");
+// 모든 층 버튼 ID
+const FLOORS = [
+  "btn-secure-call", // 1F
+  "btn-ain",         // 2F
+  "btn-identity",    // 3F
+  "btn-root"         // 4F
+];
 
-const secureBtn = document.getElementById("secureCall");
-const ainBtn = document.getElementById("ain");
-const idBtn = document.getElementById("identity");
-const rootBtn = document.getElementById("root");
+// 상태 표시
+const stateEl = document.getElementById("state");
+const wsStatusEl = document.getElementById("ws-status");
+const lambdaStatusEl = document.getElementById("lambda-status");
 
-function connectWS() {
+// -------------------------------
+// WebSocket 연결
+// -------------------------------
+function connectWebSocket() {
+  const WS_URL = "wss://gmcpl21323.execute-api.ap-southeast-2.amazonaws.com/dev/";
+
   socket = new WebSocket(WS_URL);
 
   socket.onopen = () => {
-    wsState.innerText = "CONNECTED";
+    wsStatusEl.textContent = "CONNECTED";
+    lambdaStatusEl.textContent = "OK";
   };
 
   socket.onclose = () => {
-    wsState.innerText = "DISCONNECTED";
+    wsStatusEl.textContent = "DISCONNECTED";
+    lambdaStatusEl.textContent = "UNKNOWN";
   };
 
-  socket.onmessage = (e) => {
-    const msg = JSON.parse(e.data);
-    lambdaState.innerText = "OK";
-
-    if (msg.state) {
-      stateText.innerText = "STATE: " + msg.state;
-    }
+  socket.onerror = () => {
+    wsStatusEl.textContent = "ERROR";
+    lambdaStatusEl.textContent = "ERROR";
   };
 }
 
-connectWS();
+connectWebSocket();
 
-function send(action) {
-  socket.send(JSON.stringify({ action }));
+// -------------------------------
+// UI 상태 제어 (🔥 핵심 로직)
+// -------------------------------
+function activateFloor(activeId, stateName) {
+  // 🔴 1️⃣ 모든 층 OFF
+  FLOORS.forEach(id => {
+    document.getElementById(id).classList.remove("active");
+  });
+
+  // 🟢 2️⃣ 선택된 층만 ON
+  document.getElementById(activeId).classList.add("active");
+
+  // 상태 텍스트 갱신
+  currentState = stateName;
+  stateEl.textContent = `STATE: ${stateName}`;
 }
 
-secureBtn.onclick = () => {
-  send("SECURE_CALL");
-  secureBtn.classList.add("active");
-  ainBtn.disabled = false;
+// -------------------------------
+// 버튼 이벤트 바인딩
+// -------------------------------
+document.getElementById("btn-secure-call").onclick = () => {
+  activateFloor("btn-secure-call", "SECURE_CALL");
+  sendAction("secure_call");
 };
 
-ainBtn.onclick = () => {
-  send("AIN_REQUEST");
-  ainBtn.classList.add("active");
-  idBtn.disabled = false;
+document.getElementById("btn-ain").onclick = () => {
+  activateFloor("btn-ain", "AIN_REQUESTED");
+  sendAction("acquire_ain");
 };
 
-idBtn.onclick = () => {
-  send("IDENTITY_BIND");
-  idBtn.classList.add("active");
-  rootBtn.disabled = false;
+document.getElementById("btn-identity").onclick = () => {
+  activateFloor("btn-identity", "IDENTITY_BOUND");
+  sendAction("my_identity");
 };
 
-rootBtn.onclick = () => {
-  send("ROOT_ACCESS");
-  rootBtn.classList.add("active");
+document.getElementById("btn-root").onclick = () => {
+  activateFloor("btn-root", "ROOT_GRANTED");
+  sendAction("root_access");
 };
+
+// -------------------------------
+// Lambda 전송
+// -------------------------------
+function sendAction(action) {
+  if (!socket || socket.readyState !== WebSocket.OPEN) return;
+
+  socket.send(JSON.stringify({
+    action,
+    timestamp: Date.now()
+  }));
+}
