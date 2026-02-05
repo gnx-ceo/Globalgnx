@@ -2,54 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GlobalGNX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
-    html, body {
-      width: 100%;
-      height: 100%;
+    body {
       margin: 0;
       background: #000;
+      color: #00ff66;
       font-family: monospace;
-    }
-
-    /* 전체 땅 */
-    #viewport {
-      width: 100vw;
       height: 100vh;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
     }
 
-    /* GNX 본관 건물 */
-    #gnx-building {
-      width: min(90vw, 420px);
-      min-height: 540px;
-      padding: 24px;
+    .tower {
       border: 2px solid #00ff66;
-      box-sizing: border-box;
+      padding: 30px;
+      width: 320px;
+      text-align: center;
     }
 
     h1 {
-      color: #00ff66;
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .panel {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+      margin-top: 0;
+      margin-bottom: 25px;
+      letter-spacing: 2px;
     }
 
     button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
       background: transparent;
-      color: #00ff66;
       border: 2px solid #00ff66;
-      padding: 16px;
-      font-size: 16px;
+      color: #00ff66;
+      font-size: 14px;
       cursor: pointer;
     }
 
@@ -59,30 +47,41 @@
     }
 
     #stateText {
-      margin-top: 24px;
-      color: #00ff66;
-      text-align: center;
-      font-size: 14px;
+      margin-top: 20px;
+      font-size: 13px;
+    }
+
+    .engine-room {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      border: 1px solid #00ff66;
+      padding: 12px;
+      background: rgba(0,0,0,0.85);
+      font-size: 12px;
     }
   </style>
 </head>
 
 <body>
-  <div id="viewport">
-    <div id="gnx-building">
-      <h1>GlobalGNX</h1>
+  <div class="tower">
+    <h1>GlobalGNX</h1>
 
-      <div class="panel">
-        <button id="secureCall">Start Secure Call</button>
-        <button id="ain">Acquire AIN</button>
-        <button id="identity">My Identity</button>
-        <button id="root">Root Access</button>
-      </div>
+    <button id="secureCall">Start Secure Call</button>
+    <button id="ain">Acquire AIN</button>
+    <button id="identity">My Identity</button>
+    <button id="root">Root Access</button>
 
-      <div id="stateText">STATE: IDLE</div>
-    </div>
+    <div id="stateText">STATE: IDLE</div>
   </div>
 
-  <script src="main.js"></script>
+  <!-- ENGINE ROOM -->
+  <div class="engine-room">
+    <div>ENGINE STATUS</div>
+    <div id="wsStatus">WebSocket: DISCONNECTED</div>
+    <div id="lambdaStatus">Lambda: UNKNOWN</div>
+  </div>
+
+  <script src="./main.js"></script>
 </body>
 </html>
