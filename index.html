@@ -1,57 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>GlobalGNX</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GlobalGNX – Intelligence Console</title>
 
-  <style>
-    body {
-      background: black;
-      color: #00ff00;
-      font-family: monospace;
-      padding: 20px;
-    }
+<style>
+/* ===============================
+   GLOBAL STYLE
+=============================== */
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #00ff66;
+  font-family: "Courier New", monospace;
+}
 
-    h1 {
-      color: #00ff00;
-    }
+.container {
+  padding: 40px;
+}
 
-    button {
-      display: block;
-      margin: 10px 0;
-      padding: 10px;
-      width: 220px;
-      background: black;
-      border: 1px solid #00ff00;
-      color: #00ff00;
-      cursor: pointer;
-    }
+h1 {
+  margin-bottom: 30px;
+  font-size: 32px;
+}
 
-    button.active {
-      background: #00ff00;
-      color: black;
-    }
+/* ===============================
+   BUTTONS
+=============================== */
+button {
+  display: block;
+  width: 260px;
+  margin-bottom: 14px;
+  padding: 14px;
+  background: transparent;
+  border: 2px solid #00ff66;
+  color: #00ff66;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+}
 
-    #stateText {
-      margin-top: 20px;
-      font-size: 14px;
-    }
-  </style>
+button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+button.active {
+  background: #00ff66;
+  color: #000;
+}
+
+/* ===============================
+   STATE PANEL
+=============================== */
+#stateText {
+  margin-top: 30px;
+  font-size: 14px;
+}
+</style>
 </head>
 
 <body>
 
-  <h1>Globalgnx</h1>
+<div class="container">
+  <h1>GlobalGNX</h1>
 
   <button id="secureCall">Start Secure Call</button>
-  <button id="ain" disabled>Acquire AIN</button>
-  <button id="identity" disabled>My Identity</button>
-  <button id="root" disabled>Root Access</button>
+  <button id="ain">Acquire AIN</button>
+  <button id="identity">My Identity</button>
+  <button id="root">Root Access</button>
 
   <div id="stateText">STATE: IDLE</div>
+</div>
 
-  <!-- ⚠️ JS는 반드시 script 태그로 -->
-  <script src="main.js"></script>
+<script>
+/* ================================
+   GLOBALGNX WebSocket Frontend
+================================ */
+
+const secureBtn = document.getElementById("secureCall");
+const ainBtn = document.getElementById("ain");
+const idBtn = document.getElementById("identity");
+const rootBtn = document.getElementById("root");
+const stateText = document.getElementById("stateText");
+
+/* 🔴 반드시 본인 WebSocket URL로 교체 */
+const WS_URL = "wss://YOUR_API_ID.execute-api.ap-southeast-2.amazonaws.com/prod";
+
+let socket = null;
+
+/* ================================
+   UI CONTROL
+================================ */
+function resetButtons() {
+  [secureBtn, ainBtn, idBtn, rootBtn].forEach(btn => {
+    btn.classList.remove("active");
+    btn.disabled = true;
+  });
+}
+
+function setState(text) {
+  stateText.innerText = "STATE: " + text;
+}
+
+/* ================================
+   SOCKET
+================================ */
+function connectSocket() {
+  socket = new WebSocket(WS_URL);
+
+  socket.onopen = () => {
+    setState("CONNECTED");
+    secureBtn.disabled = false;
+  };
+
+  socket.onclose = () => {
+    setState("DISCONNECTED");
+    resetButtons();
+  };
+
+  socket.onerror = () => {
+    setState("ERROR");
+  };
+
+  socket.onmessage = (event) => {
+    console.log("MESSAGE:", event.data);
+  };
+}
+
+/* ================================
+   ACTION FLOW
+================================ */
+secureBtn.onclick = () => {
+  resetButtons();
+  secureBtn.classList.add("active");
+  socket.send(JSON.stringify({ action: "secureCall" }));
+  setState("SECURE_CALL_STARTED");
+  ainBtn.disabled = false;
+};
+
+ainBtn.onclick = () => {
+  resetButtons();
+  ainBtn.classList.add("active");
+  socket.send(JSON.stringify({ action: "acquireAIN" }));
+  setState("AIN_REQUESTED");
+  idBtn.disabled = false;
+};
+
+idBtn.onclick = () => {
+  resetButtons();
+  idBtn.classList.add("active");
+  socket.send(JSON.stringify({ action: "identity" }));
+  setState("IDENTITY_BOUND");
+  rootBtn.disabled = false;
+};
+
+rootBtn.onclick = () => {
+  resetButtons();
+  rootBtn.classList.add("active");
+  socket.send(JSON.stringify({ action: "root" }));
+  setState("ROOT_GRANTED");
+};
+
+/* ================================
+   INIT
+================================ */
+resetButtons();
+setState("IDLE");
+connectSocket();
+</script>
 
 </body>
 </html>
