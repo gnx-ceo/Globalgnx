@@ -1,241 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>GNX AIPhone</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <title>GlobalGNX</title>
 
-<style>
-    :root {
-        --green: #00ff00;
-        --dark: #000;
-        --border: #00aa00;
-    }
-
-    * {
-        box-sizing: border-box;
-        font-family: "Courier New", monospace;
-    }
-
+  <style>
     body {
-        margin: 0;
-        background: var(--dark);
-        color: var(--green);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-
-    .container {
-        text-align: center;
-        width: 320px;
+      background: black;
+      color: #00ff00;
+      font-family: monospace;
+      padding: 20px;
     }
 
     h1 {
-        margin-bottom: 30px;
-        letter-spacing: 1px;
+      color: #00ff00;
     }
 
     button {
-        width: 100%;
-        padding: 14px;
-        margin: 10px 0;
-        background: transparent;
-        color: var(--green);
-        border: 2px solid var(--border);
-        cursor: pointer;
-        font-size: 15px;
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      width: 220px;
+      background: black;
+      border: 1px solid #00ff00;
+      color: #00ff00;
+      cursor: pointer;
     }
 
     button.active {
-        background: var(--green);
-        color: #000;
+      background: #00ff00;
+      color: black;
     }
 
-    button:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
+    #stateText {
+      margin-top: 20px;
+      font-size: 14px;
     }
-
-    .state {
-        margin-top: 25px;
-        font-size: 13px;
-        min-height: 20px;
-    }
-
-    footer {
-        margin-top: 40px;
-        font-size: 11px;
-        opacity: 0.6;
-    }
-</style>
+  </style>
 </head>
 
 <body>
-<div class="container">
-    <h1>Globalgnx</h1>
 
-    <button id="secureCall">Start Secure Call</button>
-    <button id="ain" disabled>Acquire AIN</button>
-    <button id="identity" disabled>My Identity</button>
-    <button id="root" disabled>Root Access</button>
+  <h1>Globalgnx</h1>
 
-    <div class="state" id="stateText">
-        STATE: IDLE
-    </div>
+  <button id="secureCall">Start Secure Call</button>
+  <button id="ain" disabled>Acquire AIN</button>
+  <button id="identity" disabled>My Identity</button>
+  <button id="root" disabled>Root Access</button>
 
-    <footer>GNX Network · AIPhone Engine</footer>
-</div>
+  <div id="stateText">STATE: IDLE</div>
 
-<script>
-/**
- * GNX AIPhone – Secure Call Session Engine (Mock)
- * STEP 4
- */
+  <!-- ⚠️ JS는 반드시 script 태그로 -->
+  <script src="main.js"></script>
 
-const stateText = document.getElementById("stateText");
-
-const secureBtn = document.getElementById("secureCall");
-const ainBtn = document.getElementById("ain");
-const idBtn = document.getElementById("identity");
-const rootBtn = document.getElementById("root");
-
-let session = {
-    secure: false,
-    sessionId: null,
-    ain: false,
-    identity: false,
-    root: false
-};
-
-function resetButtons() {
-    [secureBtn, ainBtn, idBtn, rootBtn].forEach(b =>
-        b.classList.remove("active")
-    );
-}
-
-function generateSessionId() {
-    return "GNX-" + Math.random().toString(36).substring(2, 10).toUpperCase();
-}
-
-/* STEP 4 — Secure Call */
-secureBtn.onclick = () => {
-    resetButtons();
-    secureBtn.classList.add("active");
-
-    stateText.innerText = "STATE: SECURE_CALL → initializing secure channel…";
-
-    setTimeout(() => {
-        session.secure = true;
-        session.sessionId = generateSessionId();
-
-        stateText.innerText =
-            "STATE: SECURE_CHANNEL_ESTABLISHED\n" +
-            "SESSION ID: " + session.sessionId;
-
-        ainBtn.disabled = false;
-    }, 1200);
-};
-
-/* STEP 5 — AIN */
-ainBtn.onclick = () => {
-    resetButtons();
-    ainBtn.classList.add("active");
-
-    stateText.innerText =
-        "STATE: AIN_REQUEST → issuing AIN for session " + session.sessionId;
-
-    setTimeout(() => {
-        session.ain = true;
-        stateText.innerText =
-            "STATE: AIN_BOUND → linked to " + session.sessionId;
-
-        idBtn.disabled = false;
-    }, 1000);
-};
-
-/* STEP 6 — Identity */
-idBtn.onclick = () => {
-    resetButtons();
-    idBtn.classList.add("active");
-
-    stateText.innerText =
-        "STATE: IDENTITY_VERIFY → validating credentials…";
-
-    setTimeout(() => {
-        session.identity = true;
-        stateText.innerText =
-            "STATE: IDENTITY_BOUND → verified";
-
-        rootBtn.disabled = false;
-    }, 900);
-};
-
-/* STEP 7 — Root */
-rootBtn.onclick = () => {
-    resetButtons();
-    rootBtn.classList.add("active");
-
-    stateText.innerText =
-        "STATE: ROOT_REQUEST → privilege escalation…";
-
-    setTimeout(() => {
-        session.root = true;
-        stateText.innerText =
-            "STATE: ROOT_GRANTED → system-level access";
-    }, 800);
-};
-</script>
-
-const stateText = document.getElementById("stateText");
-
-const secureBtn = document.getElementById("secureCall");
-const ainBtn = document.getElementById("ain");
-const idBtn = document.getElementById("identity");
-const rootBtn = document.getElementById("root");
-
-function resetButtons() {
-    [secureBtn, ainBtn, idBtn, rootBtn].forEach(b => b.classList.remove("active"));
-}
-
-secureBtn.onclick = () => {
-    resetButtons();
-    secureBtn.classList.add("active");
-
-    stateText.innerText =
-        "STATE: SECURE_CALL → Channel not yet bound";
-
-    ainBtn.disabled = false;
-};
-
-ainBtn.onclick = () => {
-    resetButtons();
-    ainBtn.classList.add("active");
-
-    stateText.innerText =
-        "STATE: AIN_REQUEST → AIN issuance pending";
-
-    idBtn.disabled = false;
-};
-
-idBtn.onclick = () => {
-    resetButtons();
-    idBtn.classList.add("active");
-
-    stateText.innerText =
-        "STATE: IDENTITY_BOUND → identity verified";
-
-    rootBtn.disabled = false;
-};
-
-rootBtn.onclick = () => {
-    resetButtons();
-    rootBtn.classList.add("active");
-
-    stateText.innerText =
-        "STATE: ROOT_GRANTED → system-level access";
-};
-</script>
 </body>
 </html>
